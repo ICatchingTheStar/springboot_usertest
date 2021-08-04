@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- 网页使用的语言 -->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 指定字符集 -->
+    <meta charset="utf-8">
+    <!-- 使用Edge最新的浏览器的渲染方式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- viewport视口：网页可以根据设置的宽度自动进行适配，在浏览器的内部虚拟一个容器，容器的宽度与设备的宽度相同。
+    width: 默认宽度与设备的宽度相同
+    initial-scale: 初始的缩放比，为1:1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>用户信息管理系统</title>
+
+    <!-- 1. 导入CSS的全局样式 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- 2. jQuery导入，建议使用1.9以上的版本 -->
+    <script src="js/jquery-2.1.0.min.js"></script>
+    <!-- 3. 导入bootstrap的js文件 -->
+    <script src="js/bootstrap.min.js"></script>
+    <style type="text/css">
+        td, th {
+            text-align: center;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            //给删除选中按钮添加单击事件
+            document.getElementById("delSelected").onclick=function () {
+                if (confirm('确定要删除选中的条目吗？')){
+                    document.getElementById("form").submit();//提交表单中被选中列的uid
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h3 style="text-align: center">用户信息列表</h3>
+<!--    左上角查询栏-->
+    <div style="float: left;">
+        <form class="form-inline" action="" method="post"  th:action="@{/allUserList}">
+            <div class="form-group">
+                <label for="exampleInputName2">姓名</label>
+                <input type="text" class="form-control" id="InputName1" name="name" th:value="${selectDate.name}">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputName3">籍贯</label>
+                <input type="text" class="form-control" id="InputAddress1" name="address" th:value="${selectDate.address}">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail2">邮箱</label>
+                <input type="email" class="form-control" id="InputEmail1" name="email" th:value="${selectDate.email}">
+            </div>
+            <button type="submit" class="btn btn-default">查询</button>
+        </form>
+    </div>
+<!--右上角添加、删除栏-->
+    <div style="float: right;margin: 5px;">
+        <a class="btn btn-primary" th:href="@{/add}">添加联系人</a>
+        <a class="btn btn-primary" href="javascript:void (0);" id="delSelected">删除选中</a>
+    </div>
+<!--数据展示表单-->
+    <form id="form" action="" method="post"  th:action="@{/delDelete}">
+    <table border="1" class="table table-bordered table-hover">
+        <tr class="success">
+            <th><input type="checkbox"></th>
+            <th>编号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>籍贯</th>
+            <th>QQ</th>
+            <th>邮箱</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="user,stat:${users.records}">
+            <td><input type="checkbox" name="uid" th:value="${user.uid}"></td>
+            <td th:text="${stat.count}">1</td>
+            <td th:text="${user.uname}">张三</td>
+            <td th:text="${user.ugender}">男</td>
+            <td th:text="${user.uage}">20</td>
+<!--            <td th:if="${user.address} eq ${userAddress.}" th:text="${userAddress.address}" >广东</td>-->
+            <td th:text="${user.address}">广东</td>
+            <td th:text="${user.uqq}">44444222</td>
+            <td th:text="${user.uemail}">zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" th:href="@{/user/update/{id}(id=${user.uid})}">修改</a>&nbsp;
+                <a class="btn btn-default btn-sm" th:href="@{/user/delete/{id}(id=${user.uid},pn=${users.current})}" onclick="return confirm('确定删除？');">
+                    删除
+                </a>
+            </td>
+        </tr>
+    </table>
+    </form>
+<!--    翻页按钮-->
+    <div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination" th:with="begin=${users.current}-5,end=${users.current}+4">
+<!--                起始页-->
+                <li class="prev">
+                    <a th:href="@{/allUserList(pn=1,name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+<!--                前一页-->
+                <li th:if="${users.hasPrevious()}">
+                    <a th:href="@{/allUserList(pn=(${users.current}-1),name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
+                        <span aria-hidden="true">＜</span>
+                    </a>
+                </li>
+
+<!--控制分页数量-->
+<!--                <li th:if="${users.pages} lt 10"-->
+<!--                    th:each="num:${#numbers.sequence(1,users.pages)}"-->
+<!--                    th:class="${num==users.current?'active':''}">-->
+<!--                    <a th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
+<!--                        [[${num}]]-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li th:if="${users.pages} ge 10 && begin < 1">-->
+
+<!--                    <a th:if="begin < 1"-->
+<!--                       th:with="begin2=1,end2=${begin2}+9"-->
+<!--                       th:each="num:${#numbers.sequence(begin2,end2)}"-->
+<!--                       th:class="${num==users.current?'active':''}"-->
+<!--                       th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
+<!--                        [[${num}]]-->
+<!--                    </a>-->
+<!--                    <a th:if="end > ${users.pages}"-->
+<!--                       th:with="end2=${users.pages},begin2=${end2}-9"-->
+<!--                       th:each="num:${#numbers.sequence(begin2,end2)}"-->
+<!--                       th:class="${num==users.current?'active':''}"-->
+<!--                       th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
+<!--                        [[${num}]]-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                总页码超过10页-->
+<!--                begin = pb.currentPage - 5 ;-->
+<!--                end = pb.currentPage + 4 ;-->
+
+<!--                2.如果前边不够5个，后边补齐10个-->
+<!--                if(begin < 1){-->
+<!--                begin = 1;-->
+<!--                end = begin + 9;-->
+<!--                }-->
+<!--                3.如果后边不足4个，前边补齐10个-->
+<!--                if(end > pb.totalPage){-->
+<!--                end = pb.totalPage;-->
+<!--                begin = end - 9 ;-->
+<!--                }-->
+
+
+                <!--                当前页列表-->
+                <li th:class="${num==users.current?'active':''}"
+                    th:each="num:${#numbers.sequence(1,users.pages)}">
+                    <a th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
+                        [[${num}]]
+                    </a>
+                </li>
+
+
+                <!--                下一页-->
+                <li th:if="${users.hasNext()}">
+                    <a th:href="@{/allUserList(pn=(${users.current}+1),name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
+                        <span aria-hidden="true">＞</span>
+                    </a>
+                </li>
+<!--                最后页-->
+                <li class="next">
+                    <a th:href="@{/allUserList(pn=${users.getPages()},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+<!--                分页数据-->
+                <span style="font-size: 25px;margin-left: 5px;">
+                    当前第[[${users.current}]]页，共[[${users.pages}]]页，总计[[${users.total}]]条记录
+                </span>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

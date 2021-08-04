@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.day19.boot_web04.mapper.UserDateMapper"> <!--对应mapper接口的路径-->
+<!--    public UserDate selectByUsernameAndPassword(@Param("username")String username,@Param("password")String password);-->
+
+    <select id="selectByUsernameAndPassword" resultType="com.day19.boot_web04.bean.UserDate">
+        select did,username from user_date where username=#{username} and password=#{password}
+    </select>
+
+
+<!--    <update id="myUpdateById">-->
+<!--        update user-->
+<!--        set gender=#{updateUser.gender},age=#{updateUser.age},address=#{updateUser.address},qq=#{updateUser.qq},email=#{updateUser.email}-->
+<!--        where id=#{id}-->
+<!--    </update>-->
+
+</mapper>
