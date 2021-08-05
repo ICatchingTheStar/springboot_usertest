@@ -97,83 +97,40 @@
 <!--    翻页按钮-->
     <div>
         <nav aria-label="Page navigation">
-            <ul class="pagination" th:with="begin=${users.current}-5,end=${users.current}+4">
-<!--                起始页-->
+<!--            在此设置分页工具栏的显示条数，最多显示9个-->
+            <ul class="pagination" th:with="begin=((${users.current}-4)<1 ? 1:(${users.current}-4)),end=((${users.current}+4)>${users.pages} ? ${users.pages}:(${users.current}+4))">
+<!--            起始页-->
                 <li class="prev">
                     <a th:href="@{/allUserList(pn=1,name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-<!--                前一页-->
+<!--            前一页-->
                 <li th:if="${users.hasPrevious()}">
                     <a th:href="@{/allUserList(pn=(${users.current}-1),name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
                         <span aria-hidden="true">＜</span>
                     </a>
                 </li>
-
-<!--控制分页数量-->
-<!--                <li th:if="${users.pages} lt 10"-->
-<!--                    th:each="num:${#numbers.sequence(1,users.pages)}"-->
-<!--                    th:class="${num==users.current?'active':''}">-->
-<!--                    <a th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
-<!--                        [[${num}]]-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li th:if="${users.pages} ge 10 && begin < 1">-->
-
-<!--                    <a th:if="begin < 1"-->
-<!--                       th:with="begin2=1,end2=${begin2}+9"-->
-<!--                       th:each="num:${#numbers.sequence(begin2,end2)}"-->
-<!--                       th:class="${num==users.current?'active':''}"-->
-<!--                       th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
-<!--                        [[${num}]]-->
-<!--                    </a>-->
-<!--                    <a th:if="end > ${users.pages}"-->
-<!--                       th:with="end2=${users.pages},begin2=${end2}-9"-->
-<!--                       th:each="num:${#numbers.sequence(begin2,end2)}"-->
-<!--                       th:class="${num==users.current?'active':''}"-->
-<!--                       th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">-->
-<!--                        [[${num}]]-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                总页码超过10页-->
-<!--                begin = pb.currentPage - 5 ;-->
-<!--                end = pb.currentPage + 4 ;-->
-
-<!--                2.如果前边不够5个，后边补齐10个-->
-<!--                if(begin < 1){-->
-<!--                begin = 1;-->
-<!--                end = begin + 9;-->
-<!--                }-->
-<!--                3.如果后边不足4个，前边补齐10个-->
-<!--                if(end > pb.totalPage){-->
-<!--                end = pb.totalPage;-->
-<!--                begin = end - 9 ;-->
-<!--                }-->
-
-
-                <!--                当前页列表-->
+<!--            当前页列表-->
                 <li th:class="${num==users.current?'active':''}"
-                    th:each="num:${#numbers.sequence(1,users.pages)}">
+                    th:each="num:${#numbers.sequence(begin,end)}">
                     <a th:href="@{/allUserList(pn=${num},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
                         [[${num}]]
                     </a>
                 </li>
-
-
-                <!--                下一页-->
+<!--            下一页-->
                 <li th:if="${users.hasNext()}">
                     <a th:href="@{/allUserList(pn=(${users.current}+1),name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
                         <span aria-hidden="true">＞</span>
                     </a>
                 </li>
-<!--                最后页-->
+<!--            最后页-->
                 <li class="next">
                     <a th:href="@{/allUserList(pn=${users.getPages()},name=${selectDate.name},address=${selectDate.address},email=${selectDate.email})}">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
-<!--                分页数据-->
+<!--            分页数据-->
                 <span style="font-size: 25px;margin-left: 5px;">
                     当前第[[${users.current}]]页，共[[${users.pages}]]页，总计[[${users.total}]]条记录
                 </span>
