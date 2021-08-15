@@ -1,6 +1,22 @@
-# bootWebProject4
-基于springboot+mybatisPlus的用户信息网页小项目。
-框架：springboot+mybatisPlus+thymeleaf
-数据库：mysql 5.1.49
+# 关于该项目
 
-效果：具有管理员登录、欢迎页、用户信息展示页、信息的增删改查以及分页的内容。
+这是基于springboot框架的简易项目：用户管理系统，主要由**springboot2.3.7**、**mybatis-plus3.4.2**、**mysql5.1.49**以及前段模板引擎**thymeleaf**完成。 
+
+# 大致结构
+
+```mermaid
+graph LR
+A[登录功能] -- 欢迎页跳转 --> B((用户表))
+B --> D{分页展示}
+B --> E{增删改}
+B --> F{批量删除}
+B --> G{复杂条件查询}
+D --> H{数据库}
+E --> H{数据库}
+F --> H{数据库}
+G --> H{数据库}
+```
+
+## 注意
+
+该版本为原项目以springboot重构后的版本，若是想要学习的人，可以下载**初始版本**以及**空项目**进行对照。
